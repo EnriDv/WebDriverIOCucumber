@@ -1,7 +1,7 @@
 import Page from './page.js'
 
 class AlertsPage extends Page {
-    get resultText() { return $('#result') }
+    async resultText() { return await $('#result') }
 
     async triggerAlert() {
         await $('button=Click for JS Alert').click()
