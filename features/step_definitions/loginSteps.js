@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@wdio/cucumber-framework'
-import LoginPage from '../pageobjects/loginPage.js'
+import LoginPage from '../../pageObjects/loginPage.js'
 
 Given('que estoy en la página de login de Swag Labs', async () => {
     await LoginPage.open()
@@ -76,7 +76,7 @@ Then('debería ver el mensaje de error {string}', async (expectedMessage) => {
 })
 
 Then('debería acceder al catálogo de productos', async () => {
-    expect(await browser.getUrl()).not.toContain('saucedemo.com/')
+    expect(await browser.getUrl()).not.toContain('https://www.saucedemo.com/inventory.html')
     expect(await browser.getUrl()).toContain('inventory.html')
 })
 

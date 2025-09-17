@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@wdio/cucumber-framework'
-import ProductDetailPage from '../pageobjects/productDetailPage.js'
-import InventoryPage from '../pageobjects/inventoryPage.js'
+import ProductDetailPage from '../../pageobjects/productDetailPage.js'
+import InventoryPage from '../../pageobjects/inventoryPage.js'
 
 Given('que estoy en la página de detalle de un producto', async () => {
     expect(await ProductDetailPage.isProductDetailPageDisplayed()).toBe(true)

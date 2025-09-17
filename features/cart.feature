@@ -4,9 +4,11 @@ Feature: Gestión del Carrito de Compras
   Para revisar mis selecciones antes de proceder al checkout
 
 Background:
-  Given que estoy logueado como "standard_user"
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "standard_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
 
-@carrito @smoke
+@carrito-vacio @visualizacion-inicial @smoke
 Scenario: Acceder al carrito vacío
   Given que el carrito está vacío
   When voy al carrito de compras
@@ -16,7 +18,7 @@ Scenario: Acceder al carrito vacío
   And debería ver el botón "Checkout"
   And el botón "Checkout" debería estar deshabilitado
 
-@carrito @positivo
+@carrito-visualizacion @productos-agregados @funcionalidad-basica
 Scenario: Ver productos agregados en el carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -26,7 +28,7 @@ Scenario: Ver productos agregados en el carrito
   And el carrito debería contener "Sauce Labs Bike Light"
   And el carrito debería contener 2 producto(s)
 
-@carrito @positivo
+@carrito-detalles @informacion-completa @validacion-datos
 Scenario: Verificar detalles completos de productos en el carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   When voy al carrito de compras
@@ -35,7 +37,7 @@ Scenario: Verificar detalles completos de productos en el carrito
   And debería poder ver los nombres completos de los productos
   And debería poder ver las descripciones completas
 
-@eliminarProductos @positivo
+@carrito-eliminar @producto-especifico @gestion-productos
 Scenario: Eliminar producto específico del carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -45,7 +47,7 @@ Scenario: Eliminar producto específico del carrito
   And el carrito no debería contener "Sauce Labs Backpack"
   And el carrito debería contener 1 producto(s)
 
-@eliminarProductos @positivo
+@carrito-eliminar @por-posicion @gestion-productos
 Scenario: Eliminar producto por posición
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -53,7 +55,7 @@ Scenario: Eliminar producto por posición
   And elimino el producto en la posición 1
   Then el carrito debería contener 1 producto(s)
 
-@vaciarCarrito @positivo
+@carrito-vaciar @eliminar-todos @gestion-productos
 Scenario: Vaciar completamente el carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -62,7 +64,7 @@ Scenario: Vaciar completamente el carrito
   Then el carrito debería estar vacío
   And el badge del carrito no debería estar visible
 
-@navegacion @positivo
+@carrito-navegacion @continuar-comprando @navegacion-paginas
 Scenario: Continuar comprando desde el carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   When voy al carrito de compras
@@ -70,7 +72,7 @@ Scenario: Continuar comprando desde el carrito
   Then debería estar en el catálogo de productos
   And debería ver el título "Products"
 
-@checkout @positivo
+@carrito-checkout @proceder-compra @navegacion-checkout
 Scenario: Proceder al checkout con productos
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -79,7 +81,7 @@ Scenario: Proceder al checkout con productos
   When procedo al checkout
   Then debería estar en la página de información del checkout
 
-@validaciones @positivo
+@carrito-validacion @datos-correctos @validacion-estructura
 Scenario: Validar datos correctos del carrito
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -88,7 +90,7 @@ Scenario: Validar datos correctos del carrito
   And los precios deberían tener formato monetario correcto
   And debería ver el resumen correcto del carrito
 
-@contadores @positivo
+@carrito-contadores @consistencia-badge @validacion-contadores
 Scenario: Verificar consistencia de contadores
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
@@ -97,14 +99,14 @@ Scenario: Verificar consistencia de contadores
   Then el contador del carrito debería coincidir con los items mostrados
   And el badge del carrito debería mostrar 3
 
-@calculos @validacion
+@carrito-calculos @total-productos @validacion-matematica
 Scenario: Calcular total esperado de productos
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que he agregado "Sauce Labs Bike Light" al carrito previamente
   When voy al carrito de compras
   Then debería poder calcular el total esperado de los productos
 
-@multiples @positivo
+@carrito-multiples @datos-tabulares @funcionalidad-avanzada
 Scenario: Carrito con múltiples productos usando tabla
   Given que el carrito está vacío
   When agrego múltiples productos al carrito:
@@ -122,7 +124,7 @@ Scenario: Carrito con múltiples productos usando tabla
     | Sauce Labs Fleece Jacket|
   And el carrito debería contener 4 producto(s)
 
-@edgeCases @positivo
+@carrito-limite @muchos-productos @casos-limite
 Scenario: Manejo de carrito con muchos productos
   Given que el carrito está vacío
   When agrego todos los productos disponibles al carrito
@@ -131,7 +133,7 @@ Scenario: Manejo de carrito con muchos productos
   And debería manejar correctamente un carrito con muchos productos
   And el botón "Checkout" debería estar habilitado
 
-@flujoCompleto @smoke
+@carrito-flujo @inventario-a-carrito @smoke
 Scenario: Flujo completo desde inventario hasta carrito
   Given que el carrito está vacío
   When agrego "Sauce Labs Backpack" al carrito
@@ -146,25 +148,29 @@ Scenario: Flujo completo desde inventario hasta carrito
   When hago clic en "Continue Shopping"
   Then debería estar en el catálogo de productos
 
-@negativos @regresion
+@carrito-checkout-bloqueado @carrito-vacio @validacion-botones
 Scenario: Intentar checkout con carrito vacío
   Given que el carrito está vacío
   When voy al carrito de compras
   Then el carrito debería estar vacío
   And el botón "Checkout" debería estar deshabilitado
 
-@performance @validacion
+@carrito-rendimiento @performance-user @comportamientos-especiales
 Scenario: Rendimiento del carrito con usuario lento
-  Given que estoy logueado como "performance_glitch_user"
-  And que he agregado "Sauce Labs Backpack" al carrito previamente
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "performance_glitch_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And agrego "Sauce Labs Backpack" al carrito
   When voy al carrito de compras
   Then debería estar en la página del carrito
   And el carrito debería contener "Sauce Labs Backpack"
 
-@problematico @negativo
+@carrito-problematico @problem-user @comportamientos-especiales
 Scenario: Comportamiento del carrito con usuario problemático
-  Given que estoy logueado como "problem_user" 
-  And que he agregado "Sauce Labs Backpack" al carrito previamente
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "problem_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And agrego "Sauce Labs Backpack" al carrito
   When voy al carrito de compras
   Then debería estar en la página del carrito
   And el carrito debería contener "Sauce Labs Backpack"

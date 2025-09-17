@@ -4,15 +4,17 @@ Feature: Gestión del Catálogo de Productos
   Para seleccionar y agregar productos al carrito
 
 Background:
-  Given que estoy logueado como "standard_user"
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "standard_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
 
-@inventario @smoke
+@inventario-visualizacion @carga-productos @smoke
 Scenario: Verificar carga correcta del catálogo
   Then debería ver el título "Products"
   And debería ver 6 productos en el catálogo
   And debería verificar que todos los productos se cargaron correctamente
 
-@agregarProductos @positivo
+@inventario-agregar @productos-individuales @funcionalidad-basica
 Scenario Outline: Agregar productos individuales al carrito
   Given que el carrito está vacío
   When agrego "<producto>" al carrito
@@ -28,7 +30,7 @@ Scenario Outline: Agregar productos individuales al carrito
     | Sauce Labs Onesie               |
     | Test.allTheThings() T-Shirt (Red) |
 
-@agregarMultiples @positivo
+@inventario-agregar @productos-multiples @funcionalidad-basica
 Scenario: Agregar múltiples productos al carrito
   Given que el carrito está vacío
   When agrego "Sauce Labs Backpack" al carrito
@@ -36,14 +38,14 @@ Scenario: Agregar múltiples productos al carrito
   And agrego "Sauce Labs Bolt T-Shirt" al carrito
   Then el carrito debería mostrar 3 producto(s)
 
-@removerProductos @positivo
+@inventario-remover @gestion-carrito @funcionalidad-basica
 Scenario: Remover productos del carrito desde el inventario
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que tengo 1 producto(s) en el carrito
   When remuevo "Sauce Labs Backpack" del carrito
   Then el carrito debería mostrar 0 producto(s)
 
-@ordenamiento @positivo
+@inventario-ordenar @filtros-productos @funcionalidad-avanzada
 Scenario Outline: Ordenar productos en el catálogo
   When ordeno los productos por "<opcion_orden>"
   Then los productos deberían estar ordenados correctamente
@@ -55,33 +57,33 @@ Scenario Outline: Ordenar productos en el catálogo
     | Price (low to high)   |
     | Price (high to low)   |
 
-@ordenamiento @validacion
+@inventario-ordenar @alfabetico-ascendente @validacion-ordenamiento
 Scenario: Validar ordenamiento alfabético A-Z
   When ordeno los productos por "Name (A to Z)"
   Then los productos deberían estar ordenados alfabéticamente A-Z
 
-@ordenamiento @validacion
+@inventario-ordenar @alfabetico-descendente @validacion-ordenamiento
 Scenario: Validar ordenamiento alfabético Z-A
   When ordeno los productos por "Name (Z to A)"
   Then los productos deberían estar ordenados alfabéticamente Z-A
 
-@ordenamiento @validacion
+@inventario-ordenar @precio-ascendente @validacion-ordenamiento
 Scenario: Validar ordenamiento por precio ascendente
   When ordeno los productos por "Price (low to high)"
   Then los productos deberían estar ordenados por precio ascendente
 
-@ordenamiento @validacion
+@inventario-ordenar @precio-descendente @validacion-ordenamiento
 Scenario: Validar ordenamiento por precio descendente
   When ordeno los productos por "Price (high to low)"
   Then los productos deberían estar ordenados por precio descendente
 
-@interfaz @positivo
+@inventario-ui @elementos-interfaz @validacion-visual
 Scenario: Verificar elementos de la interfaz del inventario
   Then debería poder ver todos los productos con sus precios
   And debería poder ver todas las descripciones de productos
   And debería ver todos los botones "Add to cart" disponibles
 
-@interfaz @positivo
+@inventario-botones @cambio-estados @validacion-interaccion
 Scenario: Verificar cambio de botones al agregar productos
   Given que el carrito está vacío
   When agrego "Sauce Labs Backpack" al carrito
@@ -89,19 +91,19 @@ Scenario: Verificar cambio de botones al agregar productos
   Then algunos botones deberían mostrar "Remove"
   And el carrito debería mostrar 2 producto(s)
 
-@navegacion @positivo
+@inventario-navegacion @detalle-producto @navegacion-paginas
 Scenario: Navegación a página de detalle de producto
   When hago clic en el producto "Sauce Labs Backpack"
   Then debería ver los detalles del producto "Sauce Labs Backpack"
 
-@menu @positivo
+@inventario-menu @navegacion-lateral @funcionalidad-menu
 Scenario: Funcionalidad del menú hamburguesa
   When abro el menú hamburguesa
   Then el menú lateral debería estar visible
   When cierro el menú hamburguesa
   Then el menú lateral debería estar cerrado
 
-@menu @positivo
+@inventario-reset @limpiar-estado @funcionalidad-menu
 Scenario: Reset de la aplicación
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   And que tengo 1 producto(s) en el carrito
@@ -109,19 +111,19 @@ Scenario: Reset de la aplicación
   Then el carrito debería estar vacío después del reset
   And todos los productos deberían mostrar "Add to cart" después del reset
 
-@carrito @positivo
+@inventario-navegacion @ir-carrito @navegacion-paginas
 Scenario: Navegar al carrito con productos
   Given que he agregado "Sauce Labs Backpack" al carrito previamente
   When voy al carrito de compras
   Then debería estar en la página del carrito
 
-@todosProductos @positivo
+@inventario-agregar @todos-productos @casos-limite
 Scenario: Agregar todos los productos disponibles
   Given que el carrito está vacío
   When agrego todos los productos disponibles al carrito
   Then el carrito debería mostrar 6 producto(s)
 
-@multiples @positivo
+@inventario-agregar @datos-tabulares @funcionalidad-avanzada
 Scenario: Agregar productos usando tabla de datos
   Given que el carrito está vacío
   When agrego múltiples productos al carrito:
@@ -131,28 +133,36 @@ Scenario: Agregar productos usando tabla de datos
     | Sauce Labs Onesie       |
   Then el carrito debería mostrar 3 producto(s)
 
-@usuarioProblematico @negativo
+@inventario-usuario-problematico @problem-user @comportamientos-especiales
 Scenario: Comportamiento con usuario problemático
-  Given que estoy logueado como "problem_user"
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "problem_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
   When agrego "Sauce Labs Backpack" al carrito
   Then el carrito debería mostrar 1 producto(s)
   And los precios pueden estar incorrectos para problem_user
 
-@rendimiento @smoke
+@inventario-rendimiento @performance-user @comportamientos-especiales
 Scenario: Verificar carga de productos con usuario de rendimiento lento
-  Given que estoy logueado como "performance_glitch_user" 
-  Then debería ver 6 productos en el catálogo
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "performance_glitch_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And debería ver 6 productos en el catálogo
   And debería poder ver todos los productos con sus precios
 
-@visuales @ui
+@inventario-visual @visual-user @comportamientos-especiales
 Scenario: Verificación con usuario visual
-  Given que estoy logueado como "visual_user"
-  Then debería ver 6 productos en el catálogo
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "visual_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And debería ver 6 productos en el catálogo
   And debería poder ver todas las descripciones de productos
 
-@errores @negativo  
+@inventario-errores @error-user @comportamientos-especiales
 Scenario: Manejo de usuario con errores
-  Given que estoy logueado como "error_user"
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "error_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
   When agrego "Sauce Labs Backpack" al carrito
   Then el carrito debería mostrar 1 producto(s)
-  # Nota: error_user puede tener comportamientos inesperados
+  #error_user puede tener comportamientos inesperados

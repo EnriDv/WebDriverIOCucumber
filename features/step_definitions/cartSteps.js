@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@wdio/cucumber-framework'
-import CartPage from '../pageobjects/cartPage.js'
-import InventoryPage from '../pageobjects/inventoryPage.js'
+import CartPage from '../../pageobjects/cartPage.js'
+import InventoryPage from '../../pageobjects/inventoryPage.js'
 
 Given('que estoy en la página del carrito', async () => {
     expect(await CartPage.isCartPageDisplayed()).toBe(true)

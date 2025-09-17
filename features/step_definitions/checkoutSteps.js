@@ -1,8 +1,8 @@
 import { Given, When, Then } from '@wdio/cucumber-framework'
-import CheckoutStepOnePage from '../pageobjects/checkoutStepOnePage.js'
-import CheckoutStepTwoPage from '../pageobjects/checkoutStepTwoPage.js'
-import CheckoutCompletePage from '../pageobjects/checkoutCompletePage.js'
-import CartPage from '../pageobjects/cartPage.js'
+import CheckoutStepOnePage from '../../pageobjects/checkoutStepOnePage.js'
+import CheckoutStepTwoPage from '../../pageobjects/checkoutStepTwoPage.js'
+import CheckoutCompletePage from '../../pageobjects/checkoutCompletePage.js'
+import CartPage from '../../pageobjects/cartPage.js'
 
 Given('que estoy en la página de información del checkout', async () => {
     expect(await CheckoutStepOnePage.isCheckoutStepOnePageDisplayed()).toBe(true)

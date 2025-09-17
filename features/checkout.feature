@@ -4,18 +4,20 @@ Feature: Proceso de Checkout Completo
   Para finalizar mi compra exitosamente
 
 Background:
-  Given que estoy logueado como "standard_user"
-  And que he agregado "Sauce Labs Backpack" al carrito previamente
-  And que he agregado "Sauce Labs Bike Light" al carrito previamente
-  And que tengo 2 producto(s) en el carrito
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "standard_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And agrego "Sauce Labs Backpack" al carrito
+  And agrego "Sauce Labs Bike Light" al carrito
+  And tengo 2 producto(s) en el carrito
 
-@checkout @smoke
+@checkout-acceso @paso-inicial @smoke
 Scenario: Acceder al proceso de checkout
   When voy al carrito de compras
   And procedo al checkout
   Then debería estar en la página de información del checkout
 
-@checkoutExitoso @positivo
+@checkout-exitoso @compra-completa @flujo-completo @smoke
 Scenario: Completar checkout exitosamente con información válida
   When voy al carrito de compras
   And procedo al checkout
@@ -25,7 +27,7 @@ Scenario: Completar checkout exitosamente con información válida
   Then debería ver el mensaje de confirmación de compra
   And el carrito debería estar vacío después de la compra
 
-@informacionPersonal @positivo
+@checkout-informacion @llenar-datos @paso-uno
 Scenario Outline: Llenar información personal paso a paso
   When voy al carrito de compras
   And procedo al checkout
@@ -41,7 +43,7 @@ Scenario Outline: Llenar información personal paso a paso
     | Pedro  | López    | 67890  |
     | Ana    | Martín   | 11111  |
 
-@camposFaltantes @negativo
+@checkout-validacion @campos-requeridos @validacion-formulario
 Scenario Outline: Validar campos obligatorios faltantes
   When voy al carrito de compras
   And procedo al checkout
@@ -55,7 +57,7 @@ Scenario Outline: Validar campos obligatorios faltantes
     | lastName       | Last Name is required       |
     | postalCode     | Postal Code is required     |
 
-@todosVacios @negativo
+@checkout-validacion @todos-campos-vacios @validacion-formulario
 Scenario: Intentar continuar con todos los campos vacíos
   When voy al carrito de compras
   And procedo al checkout
@@ -66,7 +68,7 @@ Scenario: Intentar continuar con todos los campos vacíos
   Then debería ver el error específico para nombre faltante
   And debería estar en la página de información del checkout
 
-@resumenPedido @validacion
+@checkout-resumen @verificacion-pedido @paso-dos @validacion-datos
 Scenario: Verificar resumen completo del pedido
   When voy al carrito de compras
   And procedo al checkout
@@ -77,7 +79,7 @@ Scenario: Verificar resumen completo del pedido
   And debería ver la información de envío correcta
   And debería ver los totales calculados correctamente
 
-@calculosTotales @validacion
+@checkout-calculos @totales-matematicos @paso-dos @validacion-matematica
 Scenario: Validar cálculos de precios en el resumen
   When voy al carrito de compras
   And procedo al checkout
@@ -87,14 +89,14 @@ Scenario: Validar cálculos de precios en el resumen
   And debería poder ver el subtotal, impuestos y total
   And debería ver los totales calculados correctamente
 
-@cancelacion @navegacion
+@checkout-cancelacion @paso-uno @navegacion-regreso
 Scenario: Cancelar desde información personal
   When voy al carrito de compras
   And procedo al checkout
   And hago clic en Cancel en el paso uno
   Then debería estar de vuelta en el carrito
 
-@cancelacion @navegacion
+@checkout-cancelacion @paso-dos @navegacion-regreso
 Scenario: Cancelar desde resumen del pedido
   When voy al carrito de compras
   And procedo al checkout
@@ -102,7 +104,7 @@ Scenario: Cancelar desde resumen del pedido
   And hago clic en Cancel en el resumen
   Then debería estar de vuelta en el carrito
 
-@flujoCompleto @smoke
+@checkout-flujo-completo @tres-pasos @end-to-end @smoke
 Scenario: Flujo de checkout completo paso a paso
   When voy al carrito de compras
   Then debería estar en la página del carrito
@@ -121,7 +123,7 @@ Scenario: Flujo de checkout completo paso a paso
   And debería ver el mensaje de confirmación de compra
   And el carrito debería estar vacío después de la compra
 
-@confirmacion @validacion
+@checkout-confirmacion @paso-tres @validacion-final
 Scenario: Verificar página de confirmación completa
   When voy al carrito de compras
   And procedo al checkout
@@ -132,7 +134,7 @@ Scenario: Verificar página de confirmación completa
   And debería ver la imagen de confirmación
   And debería ver el botón "Back to Products"
 
-@navegacionPost @positivo
+@checkout-navegacion-post @regreso-catalogo @navegacion-final
 Scenario: Navegar después de completar compra
   When voy al carrito de compras
   And procedo al checkout
@@ -142,11 +144,11 @@ Scenario: Navegar después de completar compra
   When hago clic en "Back to Products"
   Then debería estar en el catálogo de productos
 
-@multipleProdcuts @validacion
+@checkout-multiples-productos @carrito-lleno @validacion-productos
 Scenario: Checkout con múltiples productos variados
-  Given que he agregado "Sauce Labs Bolt T-Shirt" al carrito previamente
-  And que he agregado "Sauce Labs Fleece Jacket" al carrito previamente
-  And que tengo 4 producto(s) en el carrito
+  And agrego "Sauce Labs Bolt T-Shirt" al carrito
+  And agrego "Sauce Labs Fleece Jacket" al carrito
+  And tengo 4 producto(s) en el carrito
   When voy al carrito de compras
   And procedo al checkout
   And completo la información personal con "Multiple", "Products", "55555"
@@ -154,7 +156,7 @@ Scenario: Checkout con múltiples productos variados
   When finalizo la compra
   Then el proceso de checkout debería completarse exitosamente
 
-@informacionPago @validacion
+@checkout-informacion-pago @datos-predeterminados @validacion-sistema
 Scenario: Verificar información de pago predeterminada
   When voy al carrito de compras
   And procedo al checkout
@@ -162,7 +164,7 @@ Scenario: Verificar información de pago predeterminada
   Then la información de pago debería ser "SauceCard #31337"
   And la información de envío debería ser "Free Pony Express Delivery!"
 
-@edgeCases @negativo
+@checkout-casos-limite @datos-largos @validacion-entrada
 Scenario: Campos con información muy larga
   When voy al carrito de compras
   And procedo al checkout
@@ -172,22 +174,26 @@ Scenario: Campos con información muy larga
   And hago clic en Continue
   Then debería estar en la página de resumen del checkout
 
-@usuarioProblematico @negativo
+@checkout-problem-user @usuario-problematico @comportamientos-especiales
 Scenario: Checkout con usuario problemático
-  Given que estoy logueado como "problem_user"
-  And que he agregado "Sauce Labs Backpack" al carrito previamente
-  And que tengo productos en el carrito para checkout
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "problem_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And agrego "Sauce Labs Backpack" al carrito
+  And tengo productos en el carrito para checkout
   When voy al carrito de compras
   And procedo al checkout
   And completo la información personal con "Problem", "User", "99999"
   And finalizo la compra
   Then debería ver el mensaje de confirmación de compra
 
-@performance @validacion
+@checkout-performance @usuario-lento @comportamientos-especiales
 Scenario: Checkout con usuario de rendimiento lento
-  Given que estoy logueado como "performance_glitch_user"
-  And que he agregado "Sauce Labs Backpack" al carrito previamente
-  And que tengo productos en el carrito para checkout
+  Given que estoy en la página de login de Swag Labs
+  When ingreso las credenciales "performance_glitch_user" y "secret_sauce"
+  Then debería acceder al catálogo de productos
+  And agrego "Sauce Labs Backpack" al carrito
+  And tengo productos en el carrito para checkout
   When voy al carrito de compras
   And procedo al checkout
   And completo la información personal con "Performance", "Test", "88888"

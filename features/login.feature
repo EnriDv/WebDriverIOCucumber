@@ -6,7 +6,7 @@ Feature: Autenticación en Swag Labs
 Background:
   Given que estoy en la página de login de Swag Labs
 
-@loginValido @smoke
+@login-exitoso @usuarios-validos @smoke
 Scenario Outline: Login exitoso con diferentes usuarios válidos
   When ingreso las credenciales "<usuario>" y "secret_sauce"
   Then debería acceder al catálogo de productos
@@ -19,13 +19,13 @@ Scenario Outline: Login exitoso con diferentes usuarios válidos
     | error_user              |
     | visual_user             |
 
-@loginFallido @negativo
+@login-fallido @usuario-bloqueado @seguridad
 Scenario: Login fallido con usuario bloqueado
   When ingreso las credenciales "locked_out_user" y "secret_sauce"
   Then debería ver el mensaje de error "Epic sadface: Sorry, this user has been locked out."
   And debería permanecer en la página de login
 
-@loginInvalido @negativo
+@login-fallido @credenciales-invalidas @seguridad
 Scenario Outline: Login fallido con credenciales inválidas
   When ingreso las credenciales "<usuario>" y "<password>"
   Then debería ver el mensaje de error "Epic sadface: Username and password do not match any user in this service"
@@ -37,33 +37,33 @@ Scenario Outline: Login fallido con credenciales inválidas
     | standard_user  | password_malo |
     | invalid_user   | invalid_pass  |
 
-@camposVacios @negativo
+@login-fallido @campos-vacios @validacion-campos
 Scenario: Login con ambos campos vacíos
   When intento hacer login con credenciales vacías
   Then debería ver el mensaje de error "Epic sadface: Username is required"
   And debería permanecer en la página de login
 
-@camposVacios @negativo
+@login-fallido @campos-incompletos @validacion-campos
 Scenario: Login solo con usuario sin contraseña
   When ingreso solo el usuario "standard_user"
   And hago clic en el botón de login
   Then el mensaje de error debería ser específico para contraseña faltante
   And debería permanecer en la página de login
 
-@camposVacios @negativo
+@login-fallido @campos-incompletos @validacion-campos
 Scenario: Login solo con contraseña sin usuario
   When ingreso solo la contraseña "secret_sauce"
   And hago clic en el botón de login
   Then el mensaje de error debería ser específico para usuario faltante
   And debería permanecer en la página de login
 
-@ui @positivo
+@login-ui @elementos-interfaz @visual
 Scenario: Verificar elementos de la página de login
   Then debería ver el logo de Swag Labs
   And debería ver las credenciales de prueba
   And debería poder ver la lista de usuarios disponibles
 
-@errorHandling
+@login-error-handling @manejo-errores
 Scenario: Manejo y limpieza de errores
   When ingreso las credenciales "invalid_user" y "invalid_pass"
   Then debería ver el mensaje de error "Epic sadface: Username and password do not match any user in this service"
@@ -71,21 +71,21 @@ Scenario: Manejo y limpieza de errores
   Then el error debería desaparecer
   And los campos de login deberían estar vacíos
 
-@edgeCases @negativo
+@login-caracteres-especiales @casos-limite @seguridad
 Scenario: Casos límite con caracteres especiales
   When ingreso caracteres especiales "!@#$%^&*()" en el usuario
   And ingreso "secret_sauce" como contraseña
   And hago clic en el botón de login
   Then debería ver el mensaje de error "Epic sadface: Username and password do not match any user in this service"
 
-@edgeCases @negativo
+@login-longitud-maxima @casos-limite @validacion-entrada
 Scenario: Usuario con muchos caracteres
   When ingreso un usuario muy largo con 100 caracteres
   And ingreso "secret_sauce" como contraseña
   And hago clic en el botón de login
   Then debería ver el mensaje de error "Epic sadface: Username and password do not match any user in this service"
 
-@regresion @positivo
+@login-persistencia @validacion-campos @regresion
 Scenario: Verificar persistencia de credenciales válidas
   Given que he ingresado "standard_user" en el campo usuario
   And que he ingresado "secret_sauce" en el campo contraseña

@@ -1,6 +1,6 @@
 import { Given, When, Then } from '@wdio/cucumber-framework'
-import InventoryPage from '../pageobjects/inventoryPage.js'
-import LoginPage from '../pageobjects/loginPage.js'
+import InventoryPage from '../../pageobjects/inventoryPage.js'
+import LoginPage from '../../pageobjects/loginPage.js'
 
 Given('que estoy logueado como {string}', async (userType) => {
     await LoginPage.open()
